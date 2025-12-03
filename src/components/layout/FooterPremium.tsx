@@ -31,13 +31,6 @@ const FooterPremium: React.FC = () => {
     { name: 'Terms of Service', path: '/terms' }
   ];
 
-  // Debug: Check environment variables
-  console.log('=== Social Media Debug ===');
-  console.log('LinkedIn Enabled:', import.meta.env.VITE_SOCIAL_LINKEDIN_ENABLED);
-  console.log('Twitter Enabled:', import.meta.env.VITE_SOCIAL_TWITTER_ENABLED);
-  console.log('Instagram Enabled:', import.meta.env.VITE_SOCIAL_INSTAGRAM_ENABLED);
-  console.log('Facebook Enabled:', import.meta.env.VITE_SOCIAL_FACEBOOK_ENABLED);
-
   const socialLinks = [
     {
       icon: <Linkedin size={20} />,
@@ -64,9 +57,6 @@ const FooterPremium: React.FC = () => {
       enabled: import.meta.env.VITE_SOCIAL_FACEBOOK_ENABLED !== 'false'
     }
   ].filter(social => social.enabled); // Only show enabled social media
-
-  console.log('Filtered social links:', socialLinks.map(s => s.label));
-  console.log('======================');
 
   const companyInfo = {
     name: 'Sysdak Technologies',

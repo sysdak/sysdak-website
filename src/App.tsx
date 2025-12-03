@@ -14,7 +14,7 @@ import NotFound from './pages/NotFound';
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="flex flex-col min-h-screen">
         <NavbarPremium />
         <main className="flex-grow">
