@@ -1,4 +1,4 @@
-// Premium professional color palette for Sysdak Technologies
+// Premium professional color palette for Sysdak Inc
 export const theme = {
   // Primary color shades (deep professional blues - based on user preference)
   primary: {

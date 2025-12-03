@@ -59,7 +59,7 @@ const FooterPremium: React.FC = () => {
   ].filter(social => social.enabled); // Only show enabled social media
 
   const companyInfo = {
-    name: 'Sysdak Technologies',
+    name: 'Sysdak Inc',
     description: 'Leading IT solutions provider delivering enterprise-grade technology consulting, custom software development, and innovative digital transformation services.',
     address: '62/18A Sathya Nagar, BK Pudur, Kuniamuthur, Coimbatore, Tamil Nadu 641030, India',
     phone: '+91 8946060246',

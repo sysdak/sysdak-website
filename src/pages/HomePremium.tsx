@@ -9,7 +9,7 @@ import Button from '../components/ui/Button';
 import { fadeInUp, staggerContainer } from '../utils/animations';
 
 const HomePremium: React.FC = () => {
-  
+
   const services = [
     {
       icon: <Sparkles size={32} />,
@@ -64,12 +64,12 @@ const HomePremium: React.FC = () => {
     }
   ];
 
-  
+
   return (
     <>
       <HeroPremium />
 
-  
+
       {/* Services Section */}
       <section className="py-20 bg-gradient-to-br from-primary-50 to-secondary-50">
         <Container>
@@ -165,7 +165,7 @@ const HomePremium: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl font-bold text-white mb-4">
-              Why Choose Sysdak Technologies
+              Why Choose Sysdak Inc
             </h2>
             <p className="text-xl text-blue-200 max-w-3xl mx-auto">
               We combine technical expertise with strategic thinking to deliver solutions that drive real business value.
