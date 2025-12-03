@@ -12,49 +12,64 @@ const FooterPremium: React.FC = () => {
   const quickLinks = [
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
-    { name: 'Solutions', path: '/solutions' },
     { name: 'Services', path: '/services' },
-    { name: 'Case Studies', path: '/case-studies' },
+    { name: 'Solutions', path: '/solutions' },
+    { name: 'Projects', path: '/projects' },
     { name: 'Contact', path: '/contact' }
   ];
 
   const services = [
-    { name: 'IT Consulting', path: '/services/consulting' },
-    { name: 'Cloud Solutions', path: '/services/cloud' },
-    { name: 'Cybersecurity', path: '/services/security' },
     { name: 'Software Development', path: '/services/development' },
-    { name: 'Data Analytics', path: '/services/analytics' },
+    { name: 'Cloud Solutions', path: '/services/cloud' },
+    { name: 'IT Infrastructure', path: '/services/infrastructure' },
+    { name: 'Digital Transformation', path: '/services/transformation' },
     { name: '24/7 Support', path: '/services/support' }
-  ];
-
-  const resources = [
-    { name: 'Blog', path: '/blog' },
-    { name: 'Case Studies', path: '/case-studies' },
-    { name: 'White Papers', path: '/white-papers' },
-    { name: 'API Documentation', path: '/docs' },
-    { name: 'Help Center', path: '/help' },
-    { name: 'Community', path: '/community' }
   ];
 
   const legal = [
     { name: 'Privacy Policy', path: '/privacy' },
-    { name: 'Terms of Service', path: '/terms' },
-    { name: 'Cookie Policy', path: '/cookies' },
-    { name: 'GDPR Compliance', path: '/gdpr' },
-    { name: 'Security', path: '/security' },
-    { name: 'Sitemap', path: '/sitemap' }
+    { name: 'Terms of Service', path: '/terms' }
   ];
 
+  // Debug: Check environment variables
+  console.log('=== Social Media Debug ===');
+  console.log('LinkedIn Enabled:', import.meta.env.VITE_SOCIAL_LINKEDIN_ENABLED);
+  console.log('Twitter Enabled:', import.meta.env.VITE_SOCIAL_TWITTER_ENABLED);
+  console.log('Instagram Enabled:', import.meta.env.VITE_SOCIAL_INSTAGRAM_ENABLED);
+  console.log('Facebook Enabled:', import.meta.env.VITE_SOCIAL_FACEBOOK_ENABLED);
+
   const socialLinks = [
-    { icon: <Linkedin size={20} />, url: 'https://www.linkedin.com/in/sys-dak-5648b9356/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app', label: 'LinkedIn' },
-    { icon: <Twitter size={20} />, url: 'https://twitter.com', label: 'Twitter' },
-    { icon: <Facebook size={20} />, url: 'https://facebook.com', label: 'Facebook' },
-    { icon: <Instagram size={20} />, url: 'https://instagram.com', label: 'Instagram' }
-  ];
+    {
+      icon: <Linkedin size={20} />,
+      url: import.meta.env.VITE_SOCIAL_LINKEDIN || 'https://linkedin.com/company/sysdak',
+      label: 'LinkedIn',
+      enabled: import.meta.env.VITE_SOCIAL_LINKEDIN_ENABLED !== 'false'
+    },
+    {
+      icon: <Twitter size={20} />,
+      url: import.meta.env.VITE_SOCIAL_TWITTER || 'https://twitter.com/sysdak',
+      label: 'Twitter',
+      enabled: import.meta.env.VITE_SOCIAL_TWITTER_ENABLED !== 'false'
+    },
+    {
+      icon: <Instagram size={20} />,
+      url: import.meta.env.VITE_SOCIAL_INSTAGRAM || 'https://instagram.com/sysdak',
+      label: 'Instagram',
+      enabled: import.meta.env.VITE_SOCIAL_INSTAGRAM_ENABLED !== 'false'
+    },
+    {
+      icon: <Facebook size={20} />,
+      url: import.meta.env.VITE_SOCIAL_FACEBOOK || 'https://facebook.com/sysdak',
+      label: 'Facebook',
+      enabled: import.meta.env.VITE_SOCIAL_FACEBOOK_ENABLED !== 'false'
+    }
+  ].filter(social => social.enabled); // Only show enabled social media
+
+  console.log('Filtered social links:', socialLinks.map(s => s.label));
+  console.log('======================');
 
   const companyInfo = {
     name: 'Sysdak Technologies',
-    tagline: 'Digital Excellence Since 2009',
     description: 'Leading IT solutions provider delivering enterprise-grade technology consulting, custom software development, and innovative digital transformation services.',
     address: '62/18A Sathya Nagar, BK Pudur, Kuniamuthur, Coimbatore, Tamil Nadu 641030, India',
     phone: '+91 8946060246',
@@ -122,7 +137,7 @@ const FooterPremium: React.FC = () => {
         {/* Main footer content */}
         <div className="py-20">
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16"
+            className="grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-16"
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
@@ -136,9 +151,6 @@ const FooterPremium: React.FC = () => {
                 <h3 className="text-3xl font-bold text-white mb-4">
                   Sysdak Inc
                 </h3>
-                <p className="text-blue-200 text-sm font-medium mb-2">
-                  {companyInfo.tagline}
-                </p>
               </div>
 
               <p className="text-blue-100/80 mb-8 leading-relaxed text-sm">
@@ -214,60 +226,13 @@ const FooterPremium: React.FC = () => {
               </ul>
             </motion.div>
 
-            {/* Services */}
+            {/* Legal */}
             <motion.div variants={fadeInUp}>
-              <h3 className="text-lg font-bold text-white mb-6">
-                Services
-              </h3>
-              <ul className="space-y-3">
-                {services.map((service, index) => (
-                  <motion.li
-                    key={service.name}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 + index * 0.05 }}
-                  >
-                    <Link
-                      to={service.path}
-                      className="text-blue-100/80 hover:text-cyan-400 transition-all duration-300 text-sm flex items-center group"
-                    >
-                      <span className="w-0 group-hover:w-4 h-0.5 bg-cyan-400 transition-all duration-300 mr-0 group-hover:mr-2" />
-                      {service.name}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Resources & Legal */}
-            <motion.div variants={fadeInUp}>
-              <h3 className="text-lg font-bold text-white mb-6">
-                Resources
-              </h3>
-              <ul className="space-y-3 mb-8">
-                {resources.slice(0, 4).map((resource, index) => (
-                  <motion.li
-                    key={resource.name}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 + index * 0.05 }}
-                  >
-                    <Link
-                      to={resource.path}
-                      className="text-blue-100/80 hover:text-cyan-400 transition-all duration-300 text-sm flex items-center group"
-                    >
-                      <span className="w-0 group-hover:w-4 h-0.5 bg-cyan-400 transition-all duration-300 mr-0 group-hover:mr-2" />
-                      {resource.name}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-
               <h3 className="text-lg font-bold text-white mb-6">
                 Legal
               </h3>
               <ul className="space-y-3">
-                {legal.slice(0, 3).map((item, index) => (
+                {legal.map((item, index) => (
                   <motion.li
                     key={item.name}
                     initial={{ x: -20, opacity: 0 }}

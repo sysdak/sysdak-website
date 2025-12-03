@@ -381,7 +381,7 @@ const Services: React.FC = () => {
                   icon={<ArrowRight size={20} />}
                   iconPosition="right"
                   onClick={() => window.location.href = '/contact'}
-                  className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-10 py-4 rounded-full"
+                  className="bg-gradient-to-r from-blue-700 to-blue-800 text-white hover:from-blue-800 hover:to-blue-900 text-lg px-10 py-4 rounded-full shadow-lg"
                 >
                   Start Your Project
                 </Button>
@@ -395,7 +395,7 @@ const Services: React.FC = () => {
                   variant="outline"
                   size="lg"
                   onClick={() => window.location.href = '/contact'}
-                  className="border-2 border-white text-white hover:bg-white hover:text-blue-600 text-lg px-10 py-4 rounded-full"
+                  className="border-2 border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-blue-600 text-lg px-10 py-4 rounded-full"
                 >
                   Schedule Consultation
                 </Button>

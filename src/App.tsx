@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavbarPremium from './components/layout/NavbarPremium';
-import Footer from './components/layout/Footer';
+import FooterPremium from './components/layout/FooterPremium';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -38,7 +38,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-        <Footer />
+        <FooterPremium />
       </div>
     </Router>
   );
