@@ -32,9 +32,9 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, role, image }) => {
   return (
     <Card>
       <div className="relative h-64 overflow-hidden">
-        <img 
-          src={image} 
-          alt={name} 
+        <img
+          src={image}
+          alt={name}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
       </div>
@@ -48,10 +48,26 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, role, image }) => {
 
 const About: React.FC = () => {
   const stats = [
-    { icon: <Award size={24} />, value: '5+', label: 'Years Experience' },
-    { icon: <Users size={24} />, value: '10+', label: 'Clients Served' },
-    { icon: <Clock size={24} />, value: '10+', label: 'Projects Completed' },
-    { icon: <Target size={24} />, value: '99%', label: 'Client Satisfaction' },
+    {
+      icon: <Award size={24} />,
+      value: import.meta.env.VITE_STATS_YEARS_EXPERIENCE || '5+',
+      label: 'Years Experience'
+    },
+    {
+      icon: <Users size={24} />,
+      value: import.meta.env.VITE_STATS_CLIENTS_SERVED || '10+',
+      label: 'Clients Served'
+    },
+    {
+      icon: <Clock size={24} />,
+      value: import.meta.env.VITE_STATS_PROJECTS_COMPLETED || '10+',
+      label: 'Projects Completed'
+    },
+    {
+      icon: <Target size={24} />,
+      value: import.meta.env.VITE_STATS_CLIENT_SATISFACTION || '99%',
+      label: 'Client Satisfaction'
+    },
   ];
 
   const values = [

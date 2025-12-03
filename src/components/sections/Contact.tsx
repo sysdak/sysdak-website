@@ -181,7 +181,7 @@ const Contact: React.FC = () => {
               </motion.div>
             ))}
 
-            </motion.div>
+          </motion.div>
 
           {/* Contact Form */}
           <motion.div
@@ -193,162 +193,161 @@ const Contact: React.FC = () => {
           >
             <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
-                  {formStatus.message && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`p-4 mb-4 rounded-md flex items-center space-x-3 ${
-                        formStatus.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                {formStatus.message && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-4 mb-4 rounded-md flex items-center space-x-3 ${formStatus.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
                       }`}
-                    >
-                      {formStatus.type === 'success' ? (
-                        <CheckCircle className="h-5 w-5" />
-                      ) : (
-                        <AlertCircle className="h-5 w-5" />
-                      )}
-                      <span>{formStatus.message}</span>
-                    </motion.div>
-                  )}
+                  >
+                    {formStatus.type === 'success' ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5" />
+                    )}
+                    <span>{formStatus.message}</span>
+                  </motion.div>
+                )}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.1 }}
-                    >
-                      <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
-                        Your Name
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white"
-                        placeholder="John Doe"
-                        required
-                        disabled={isSubmitting}
-                      />
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                        Your Email
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white"
-                        placeholder="john@example.com"
-                        required
-                        disabled={isSubmitting}
-                      />
-                    </motion.div>
-                  </div>
-
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
+                    transition={{ delay: 0.1 }}
                   >
-                    <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Subject
+                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Your Name
                     </label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white"
+                      placeholder="John Doe"
                       required
                       disabled={isSubmitting}
-                    >
-                      <option value="">Select a subject</option>
-                      <option value="General Inquiry">General Inquiry</option>
-                      <option value="Support">Technical Support</option>
-                      <option value="Sales">Sales & Partnership</option>
-                      <option value="Project Discussion">Project Discussion</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    />
                   </motion.div>
 
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.4 }}
+                    transition={{ delay: 0.2 }}
                   >
-                    <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Message
+                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Your Email
                     </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={5}
-                      value={formData.message}
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white resize-none"
-                      placeholder="Tell us about your project..."
+                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white"
+                      placeholder="john@example.com"
                       required
                       disabled={isSubmitting}
-                    ></textarea>
+                    />
                   </motion.div>
+                </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.45 }}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Subject
+                  </label>
+                  <select
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white"
+                    required
+                    disabled={isSubmitting}
                   >
-                    <div className="mb-4">
-                      <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEbDfNvB9K0n2v"
-                        onChange={handleCaptchaChange}
-                        theme="light"
-                        size="normal"
-                      />
-                    </div>
-                  </motion.div>
+                    <option value="">Select a subject</option>
+                    <option value="General Inquiry">General Inquiry</option>
+                    <option value="Support">Technical Support</option>
+                    <option value="Sales">Sales & Partnership</option>
+                    <option value="Project Discussion">Project Discussion</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </motion.div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.5 }}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white resize-none"
+                    placeholder="Tell us about your project..."
+                    required
+                    disabled={isSubmitting}
+                  ></textarea>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.45 }}
+                >
+                  <div className="mb-4">
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEbDfNvB9K0n2v"}
+                      onChange={handleCaptchaChange}
+                      theme="light"
+                      size="normal"
+                    />
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <motion.button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 flex items-center justify-center gap-3 text-lg"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
                   >
-                    <motion.button
-                      type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 flex items-center justify-center gap-3 text-lg"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          Send Message
-                          <Send size={20} />
-                        </>
-                      )}
-                    </motion.button>
-                  </motion.div>
-                </form>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send Message
+                        <Send size={20} />
+                      </>
+                    )}
+                  </motion.button>
+                </motion.div>
+              </form>
             </div>
           </motion.div>
         </div>

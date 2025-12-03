@@ -49,7 +49,7 @@ const ContactPage: React.FC = () => {
           </div>
         </Container>
       </div>
-      
+
       <section className="py-12 bg-white">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -59,13 +59,10 @@ const ContactPage: React.FC = () => {
                   <Mail size={24} />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Us</h3>
-                <p className="text-gray-600 mb-2">For general inquiries:</p>
-                <a href="mailto:syscatch0@gmail.com" className="text-blue-700 hover:text-blue-800 transition-colors">
-                syscatch0@gmail.com
-                </a>
+
                 <p className="text-gray-600 mt-3 mb-2">For support requests:</p>
-                <a href="mailto:syscatch0@gmail.com" className="text-blue-700 hover:text-blue-800 transition-colors">
-                syscatch0@gmail.com
+                <a href="mailto:contact@sysdak.com" className="text-blue-700 hover:text-blue-800 transition-colors">
+                  contact@sysdak.com
                 </a>
               </Card.Content>
             </Card>
@@ -92,7 +89,7 @@ const ContactPage: React.FC = () => {
               </Card.Content>
             </Card>
           </div>
-          
+
           <div className="bg-gray-100 rounded-lg p-6 mb-12">
             <div className="flex items-center mb-4">
               <MessagesSquare className="h-6 w-6 text-blue-700 mr-2" />
@@ -105,9 +102,9 @@ const ContactPage: React.FC = () => {
           </div>
         </Container>
       </section>
-      
+
       <Contact />
-      
+
       <section className="py-20 bg-gray-50">
         <Container>
           <div className="text-center mb-12">
@@ -116,12 +113,12 @@ const ContactPage: React.FC = () => {
               Find answers to common questions about our services and how we work with clients.
             </p>
           </div>
-          
+
           <div className="max-w-3xl mx-auto">
             <Card>
               <Card.Content>
                 {faqs.map((faq, index) => (
-                  <FAQ 
+                  <FAQ
                     key={index}
                     question={faq.question}
                     answer={faq.answer}

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Flask Backend with Gunicorn
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sysdak-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      - FLASK_ENV=production
+      - GUNICORN_HOST=0.0.0.0
+      - GUNICORN_PORT=5000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - backend-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - sysdak-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: sysdak-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./backend/deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - nginx-logs:/var/log/nginx
+      # Uncomment for SSL/TLS
+      # - ./ssl/cert.pem:/etc/nginx/ssl/cert.pem:ro
+      # - ./ssl/key.pem:/etc/nginx/ssl/key.pem:ro
+    depends_on:
+      - backend
+    networks:
+      - sysdak-network
+
+volumes:
+  backend-logs:
+  nginx-logs:
+
+networks:
+  sysdak-network:
+    driver: bridge

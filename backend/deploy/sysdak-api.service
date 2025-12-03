@@ -1,0 +1,34 @@
+[Unit]
+Description=SysDak API Service
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/sysdak/backend
+Environment="PATH=/var/www/sysdak/backend/venv/bin"
+EnvironmentFile=/var/www/sysdak/backend/.env
+
+# Gunicorn command
+ExecStart=/var/www/sysdak/backend/venv/bin/gunicorn \
+    -c /var/www/sysdak/backend/gunicorn.conf.py \
+    wsgi:application
+
+# Restart policy
+Restart=always
+RestartSec=10
+KillMode=mixed
+TimeoutStopSec=30
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sysdak-api
+
+[Install]
+WantedBy=multi-user.target

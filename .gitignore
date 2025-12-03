@@ -8,9 +8,18 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+venv
 dist
 dist-ssr
 *.local
+
+# Environment variables - SECURITY CRITICAL
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
 
 # Editor directories and files
 .vscode/*

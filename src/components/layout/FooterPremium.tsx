@@ -58,7 +58,7 @@ const FooterPremium: React.FC = () => {
     description: 'Leading IT solutions provider delivering enterprise-grade technology consulting, custom software development, and innovative digital transformation services.',
     address: '62/18A Sathya Nagar, BK Pudur, Kuniamuthur, Coimbatore, Tamil Nadu 641030, India',
     phone: '+91 8946060246',
-    email: 'syscatch0@gmail.com'
+    email: 'contact@sysdak.com'
   };
 
   return (
@@ -187,7 +187,7 @@ const FooterPremium: React.FC = () => {
                 </motion.div>
               </div>
 
-              </motion.div>
+            </motion.div>
 
             {/* Quick Links */}
             <motion.div variants={fadeInUp}>

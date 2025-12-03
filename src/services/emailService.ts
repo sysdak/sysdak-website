@@ -37,7 +37,8 @@ class EmailService {
       secure: config.secure,
       auth: config.auth,
       tls: {
-        rejectUnauthorized: false // For development, set to true in production
+        rejectUnauthorized: true,  // Security: Always validate certificates in production
+        minVersion: 'TLSv1.2'      // Enforce minimum TLS version
       }
     });
   }
@@ -179,7 +180,7 @@ This email was sent from the contact form on your website.
           </div>
           <div class="footer">
             <p>SysDak - IT Solutions & Services<br>
-            Email: syscatch0@gmail.com<br>
+            Email: contact@sysdak.com<br>
             Phone: +91 8946060246</p>
           </div>
         </div>
@@ -203,7 +204,7 @@ Best regards,
 The SysDak Team
 
 SysDak - IT Solutions & Services
-Email: syscatch0@gmail.com
+Email: contact@sysdak.com
 Phone: +91 8946060246
     `.trim();
   }

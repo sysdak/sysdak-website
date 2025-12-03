@@ -1,18 +1,60 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
 import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.mime.html import MIMEHtml
+from email.mime.text import MIMEText
 import logging
 from datetime import datetime
 from functools import wraps
 import json
-import re
+import html
+from email_validator import validate_email as validate_email_lib, EmailNotValidError
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+
+# Security: Configure CORS with restricted origins
+allowed_origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
+CORS(app, resources={
+    r"/api/*": {
+        "origins": allowed_origins,
+        "methods": ["GET", "POST"],
+        "allow_headers": ["Content-Type"],
+        "max_age": 3600
+    }
+})
+
+# Security: Add security headers
+Talisman(app, 
+    force_https=False,  # Set to True in production with HTTPS
+    strict_transport_security=True,
+    strict_transport_security_max_age=31536000,
+    content_security_policy={
+        'default-src': "'self'",
+        'script-src': "'self'",
+        'style-src': "'self' 'unsafe-inline'"
+    },
+    content_security_policy_nonce_in=['script-src']
+)
+
+# Security: Set max request size (16KB)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024
+
+# Security: Add rate limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
 
 # Configure logging
 logging.basicConfig(
@@ -37,9 +79,56 @@ EMAIL_CONFIG = {
 }
 
 def validate_email(email):
-    """Validate email format"""
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(pattern, email) is not None
+    """Validate email format using industry-standard library"""
+    try:
+        valid = validate_email_lib(email, check_deliverability=False)
+        return True
+    except EmailNotValidError:
+        return False
+
+def redact_email(email):
+    """Redact email for logging: user@domain.com -> u***@d*****.com"""
+    try:
+        parts = email.split('@')
+        if len(parts) == 2:
+            return f"{parts[0][0]}***@{parts[1][0]}*****{parts[1][-4:]}"
+    except:
+        pass
+    return "***"
+
+def validate_contact_form(data):
+    """Comprehensive form validation"""
+    errors = []
+    
+    # Check required fields
+    required_fields = ['name', 'email', 'subject', 'message']
+    for field in required_fields:
+        if not data.get(field) or not str(data.get(field)).strip():
+            errors.append(f'{field} is required')
+    
+    if errors:
+        return errors
+    
+    # Length limits
+    if len(data.get('name', '')) > 100:
+        errors.append('Name too long (max 100 characters)')
+    if len(data.get('subject', '')) > 200:
+        errors.append('Subject too long (max 200 characters)')
+    if len(data.get('message', '')) > 5000:
+        errors.append('Message too long (max 5000 characters)')
+    
+    # Email validation
+    if not validate_email(data.get('email', '')):
+        errors.append('Invalid email format')
+    
+    # Prevent injection attempts
+    dangerous_patterns = ['<script', 'javascript:', 'onerror=', 'onload=']
+    for field in ['name', 'subject', 'message']:
+        value = str(data.get(field, '')).lower()
+        if any(pattern in value for pattern in dangerous_patterns):
+            errors.append(f'Invalid content detected in {field}')
+    
+    return errors
 
 def require_email_config(f):
     """Decorator to check if email is configured"""
@@ -54,7 +143,15 @@ def require_email_config(f):
     return decorated_function
 
 def create_contact_email_template(data):
-    """Create HTML email template for contact form submission"""
+    """Create HTML email template for contact form submission - XSS SAFE"""
+    # Sanitize all user inputs
+    safe_data = {
+        'name': html.escape(data['name']),
+        'email': html.escape(data['email']),
+        'subject': html.escape(data['subject']),
+        'message': html.escape(data['message']).replace('\n', '<br>')
+    }
+    
     return f"""
     <!DOCTYPE html>
     <html>
@@ -81,19 +178,19 @@ def create_contact_email_template(data):
             <div class="content">
                 <div class="field">
                     <span class="label">👤 Name:</span>
-                    <span>{data['name']}</span>
+                    <span>{safe_data['name']}</span>
                 </div>
                 <div class="field">
                     <span class="label">📧 Email:</span>
-                    <span>{data['email']}</span>
+                    <span>{safe_data['email']}</span>
                 </div>
                 <div class="field">
                     <span class="label">📝 Subject:</span>
-                    <span>{data['subject']}</span>
+                    <span>{safe_data['subject']}</span>
                 </div>
                 <div class="field">
                     <span class="label">💬 Message:</span>
-                    <p>{data['message'].replace(chr(10), '<br>')}</p>
+                    <p>{safe_data['message']}</p>
                 </div>
                 <div class="timestamp">
                     <strong>Submitted:</strong> {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
@@ -101,7 +198,7 @@ def create_contact_email_template(data):
             </div>
             <div class="footer">
                 <p>This email was sent from the contact form on your website.</p>
-                <p>SysDak - IT Solutions & Services</p>
+                <p>SysDak - IT Solutions &amp; Services</p>
             </div>
         </div>
     </body>
@@ -109,7 +206,15 @@ def create_contact_email_template(data):
     """
 
 def create_auto_reply_template(data):
-    """Create HTML email template for auto-reply"""
+    """Create HTML email template for auto-reply - XSS SAFE"""
+    # Sanitize all user inputs
+    safe_data = {
+        'name': html.escape(data['name']),
+        'email': html.escape(data['email']),
+        'subject': html.escape(data['subject']),
+        'message': html.escape(data['message']).replace('\n', '<br>')
+    }
+    
     return f"""
     <!DOCTYPE html>
     <html>
@@ -133,12 +238,12 @@ def create_auto_reply_template(data):
                 <p>We've received your message</p>
             </div>
             <div class="content">
-                <p>Dear {data['name']},</p>
-                <p>Thank you for reaching out to SysDak. We have received your message regarding <strong>"{data['subject']}"</strong> and will get back to you as soon as possible.</p>
+                <p>Dear {safe_data['name']},</p>
+                <p>Thank you for reaching out to SysDak. We have received your message regarding <strong>"{safe_data['subject']}"</strong> and will get back to you as soon as possible.</p>
 
                 <div class="message-box">
                     <h3>📋 Your Message:</h3>
-                    <p><em>{data['message'].replace(chr(10), '<br>')}</em></p>
+                    <p><em>{safe_data['message']}</em></p>
                 </div>
 
                 <p>Our team typically responds within <strong>24-48 business hours</strong>. If you need immediate assistance, please don't hesitate to call us directly.</p>
@@ -154,7 +259,7 @@ def create_auto_reply_template(data):
                 <strong>The SysDak Team</strong></p>
             </div>
             <div class="footer">
-                <p>SysDak - IT Solutions & Services</p>
+                <p>SysDak - IT Solutions &amp; Services</p>
                 <p>© 2024 All rights reserved.</p>
             </div>
         </div>
@@ -173,7 +278,7 @@ def send_email(to_emails, subject, html_content, text_content=None, reply_to=Non
             msg['Reply-To'] = reply_to
 
         # Add HTML content
-        msg.attach(MIMEHtml(html_content, 'html'))
+        msg.attach(MIMEText(html_content, 'html'))
 
         # Add text content if provided
         if text_content:
@@ -195,30 +300,23 @@ def send_email(to_emails, subject, html_content, text_content=None, reply_to=Non
         return False
 
 @app.route('/api/contact', methods=['POST'])
+@limiter.limit("5 per hour")  # Security: Rate limit to prevent abuse
 @require_email_config
 def handle_contact_form():
     """Handle contact form submission"""
     try:
         data = request.get_json()
 
-        # Validate required fields
-        required_fields = ['name', 'email', 'subject', 'message']
-        for field in required_fields:
-            if not data.get(field):
-                return jsonify({
-                    'success': False,
-                    'message': f'{field} is required'
-                }), 400
-
-        # Validate email format
-        if not validate_email(data['email']):
+        # Security: Comprehensive input validation
+        errors = validate_contact_form(data)
+        if errors:
             return jsonify({
                 'success': False,
-                'message': 'Invalid email format'
+                'message': '; '.join(errors)
             }), 400
 
-        # Log the submission
-        logger.info(f"Contact form submission from {data['email']}: {data['subject']}")
+        # Security: Log with redacted email
+        logger.info(f"Contact form submission from {redact_email(data['email'])}: {html.escape(data['subject'][:50])}")
 
         # Send email to admin
         admin_subject = f"New Contact Form Submission: {data['subject']}"
@@ -298,12 +396,20 @@ def health_check():
     })
 
 @app.route('/api/test-email', methods=['POST'])
+@limiter.limit("3 per hour")  # Security: Rate limit test endpoint
 @require_email_config
 def test_email():
     """Test email configuration"""
     try:
         data = request.get_json()
-        test_email = data.get('email', EMAIL_CONFIG['from_email'])
+        test_email_addr = data.get('email', EMAIL_CONFIG['from_email'])
+        
+        # Security: Validate email
+        if not validate_email(test_email_addr):
+            return jsonify({
+                'success': False,
+                'message': 'Invalid email address'
+            }), 400
 
         # Send test email
         subject = "SysDak Email Service Test"
@@ -322,12 +428,12 @@ If you received this email, the SMTP configuration is working correctly!
 Timestamp: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
         """.strip()
 
-        success = send_email([test_email], subject, html_content, text_content)
+        success = send_email([test_email_addr], subject, html_content, text_content)
 
         if success:
             return jsonify({
                 'success': True,
-                'message': f'Test email sent successfully to {test_email}'
+                'message': f'Test email sent successfully to {test_email_addr}'
             })
         else:
             return jsonify({
@@ -339,16 +445,32 @@ Timestamp: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
         logger.error(f"Error in test email: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'Error: {str(e)}'
+            'message': 'Error occurred'
         }), 500
+
+# Security: Add security headers to all responses
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
 
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({'success': False, 'message': 'Endpoint not found'}), 404
+    """Handle 404 errors"""
+    return jsonify({'success': False, 'message': 'Resource not found'}), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    return jsonify({'success': False, 'message': 'Internal server error'}), 500
+    """Handle 500 errors"""
+    logger.error(f"Internal error: {str(error)}")
+    return jsonify({'success': False, 'message': 'An error occurred'}), 500
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    """Handle request too large errors"""
+    return jsonify({'success': False, 'message': 'Request too large'}), 413
 
 if __name__ == '__main__':
     # Check email configuration on startup
@@ -356,4 +478,13 @@ if __name__ == '__main__':
         logger.warning("Email service not fully configured. Some features may not work.")
 
     logger.info("Starting SysDak Email Service API...")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    
+    # Security: Use environment variables for configuration
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    host = os.getenv('FLASK_HOST', '127.0.0.1')
+    port = int(os.getenv('FLASK_PORT', '5000'))
+    
+    if debug_mode:
+        logger.warning("⚠️  DEBUG MODE IS ENABLED - DO NOT USE IN PRODUCTION!")
+    
+    app.run(debug=debug_mode, host=host, port=port)
